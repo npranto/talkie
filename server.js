@@ -1,9 +1,10 @@
 const express = require('express');
 const http = require('http');
 const socket = require('socket.io');
+const path = require('path');
 
 // initializes a port number
-const PORT = 3000;
+const PORT = 8080;
 
 // initializes an express app
 const app = express();
@@ -15,17 +16,20 @@ const server = httpServer(app);
 // initializes a socket using the server
 const io = socket(server);
 
-
-// on socket connection
-io.on('connection', function (socket) {
-    console.log('IO connection enabled...');
-    socket.on('new_message', function (message) {
-        console.log('NEW MESSAGE: ', message);
-        io.emit('receive_message', message);
-    })
-})
-
 // on listening to the server
 server.listen(PORT, function () {
     console.log('Listening to port ' + PORT);
 })
+
+app.use('/', express.static(path.join(__dirname, 'build')));
+
+// on socket connection
+io.on('connection', function (socket) {
+    console.log('Running socket in server...');
+    socket.emit('news', { hello: 'world' });
+    socket.on('my other event', function (data) {
+        console.log(data);
+    });
+});
+
+
