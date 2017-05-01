@@ -25,10 +25,11 @@ app.use('/', express.static(path.join(__dirname, 'build')));
 
 // on socket connection
 io.on('connection', function (socket) {
-    console.log('Running socket in server...');
-    socket.emit('news', { hello: 'world' });
-    socket.on('my other event', function (data) {
-        console.log(data);
+    console.log('Running socket.io in server...');
+
+    socket.on('new_message', function (message) {
+        console.log('RECEIVED: ', message);
+        io.emit('message_received', message)
     });
 });
 
